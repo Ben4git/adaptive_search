@@ -11,7 +11,7 @@ import { SearchkitManager,SearchkitProvider,
 import './index.css'
 
 // const host = "http://demo.searchkit.co/api/movies";
-const host = "http://localhost:9200/";
+const host = "http://localhost:9200/documents/";
 
 const searchkit = new SearchkitManager(host);
 
@@ -28,11 +28,10 @@ const MovieHitsGridItem = (props)=> {
   const {bemBlocks, result} = props
   // let url = "http://www.imdb.com/title/" + result._source.imdbId
   const source:any = extend({}, result._source);
-  debugger;
   return (
     <div className={bemBlocks.item().mix(bemBlocks.container("item"))} data-qa="hit">
       <div>
-
+          {source.text}
       </div>
 
     </div>
@@ -75,7 +74,6 @@ class App extends Component {
             </ActionBar>
             <ViewSwitcherHits
                 hitsPerPage={12} highlightFields={["title","plot"]}
-                sourceFilter={["plot", "title", "poster", "imdbId", "imdbRating", "year"]}
                 hitComponents={[
                   {key:"grid", title:"Grid", itemComponent:MovieHitsGridItem, defaultOption:true}
                 ]}
