@@ -1,0 +1,162 @@
+GET /_aliases
+
+GET /documents/_search
+
+POST _search
+{
+   "query": {
+      "match_all": {}
+   }
+}
+
+GET /documents/_search
+
+GET /documents/_mapping
+
+PUT /documents/
+{
+   "mappings": {
+      "doc": {
+         "properties": {
+            "text": {
+               "type": "text"
+            }
+         }
+      }
+   }
+}
+
+POST /documents/_search
+{
+   "query": {
+      "term": {
+         "text": "ben"
+      }
+   },
+   "explain": true
+}
+
+
+POST /documents/_search
+{
+   "query": {
+      "function_score": {
+         "query": {
+            "term": {
+               "text": "ben"
+            }
+         },
+         "functions": [
+            {
+               "filter": {
+                  "match": {
+                     "_id": "3"
+                  }
+               },
+               "weight": 3
+            },
+            {
+               "filter": {
+                  "match": {
+                     "_id": "2"
+                  }
+               },
+               "weight": 2
+            },
+            {
+               "filter": {
+                  "match": {
+                     "_id": "0"
+                  }
+               },
+               "weight": 1
+            }
+         ]
+      }
+   }
+}
+
+POST /documents/doc/_search
+{
+    "query": {
+        "term": {
+           "text": "ben"
+        }
+    }
+}
+    
+DELETE /documents
+
+POST /documents/doc/1
+{
+    "text": "Ben"
+}
+
+POST /documents/doc/2
+{
+    "text": "Ben Grillsauce"
+}
+    
+POST /documents/doc/3
+{
+    "text": "Velofahren mit Ben"
+}
+
+
+POST /queries/_search
+{
+    "size": 0, 
+    "aggs": {
+        "search_terms": {
+            "terms": {
+                "field": "search_term"
+            },
+            "aggs": {
+                "results": {
+                    "terms": {
+                        "field": "result"
+                    }
+                }
+            }
+        }
+    }
+}
+
+DELETE /queries
+
+PUT /queries
+{
+   "mappings": {
+      "query": {
+         "properties": {
+            "search_term": {
+               "type": "text",
+               "index": true,
+               "fielddata": true
+            },
+            "result": {
+               "type": "keyword",
+               "index": true
+            }
+         }
+      }
+   }
+}
+
+GET /queries/_search
+
+POST _bulk
+{"index":{"_index":"queries","_type":"query","_id":"1"}}
+{"search_term": "ben","result": "3"}
+{"index":{"_index":"queries","_type":"query","_id":"2"}}
+{"search_term":"ben","result": "3"}
+{"index":{"_index":"queries","_type":"query","_id":"3"}}
+{"search_term":"ben","result": "2"}
+{"index":{"_index":"queries","_type":"query","_id":"4"}}
+{"search_term": "kaffee","result": "1"}
+{"index":{"_index":"queries","_type":"query","_id":"5"}}
+{"search_term":"kaffee","result": "3"}
+{"index":{"_index":"queries","_type":"query","_id":"6"}}
+{"search_term":"kaffee","result": "2"}
+
+
